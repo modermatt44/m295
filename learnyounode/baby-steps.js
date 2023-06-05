@@ -1,7 +1,3 @@
-//console.log(process.argv)
-
-
-
 // Calculate the sum of the numbers (not strings) passed in as arguments
 
 var sum = 0;
