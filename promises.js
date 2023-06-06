@@ -35,3 +35,4 @@ function read(pathToFile){
 read('promsises.js').then((data) => {
     console.log(data.length)
 })
+
