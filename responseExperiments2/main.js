@@ -22,7 +22,7 @@ app.post('/name', fromHelper, (req, res) => {
     names.push(name);
     res.send(`Added ${name} to the list of names`);
 }
-);  
+);
 
 // GET Endpoint to get a list of names
 app.get('/name', (req, res) => {
@@ -41,4 +41,51 @@ app.delete('/name', fromHelper, (req, res) => {
         res.sendStatus(404);
     }
 }
-);  
+);
+
+// Endpoint /secret2 which returns authorization with status code 200 if it is 'Basic aGFja2VyOjEyMzQ=' and returns 401 otherwise
+app.get('/secret2', (req, res) => {
+    const auth = req.headers.authorization;
+    if (auth === 'Basic aGFja2VyOjEyMzQ=') {
+        res.sendStatus(200);
+    } else {
+        res.sendStatus(401);
+    }
+}
+);
+
+// Endpoint /chuck which returns a random Chuck Norris joke. In the text "Chuck Norris" should be replaced with the name given in the query parameter name
+app.get('/chuck', (req, res) => {
+    const name = req.query.name;
+    fetch(`https://api.chucknorris.io/jokes/random?name=${name}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then((data) => {
+            res.send(data.value);
+        }
+        );
+
+});
+
+// PATCH Endpoint /me which takes a JSON Object and overwrites the properties of the user object with the properties of the JSON Object
+const me = {
+    name: 'Hans Muster',
+    age: 42,
+    email: 'hans.muster@gmail.com'
+};
+
+app.patch('/me', fromHelper, (req, res) => {
+    const body = req.body;
+    for (const key in body) {
+        if (Object.hasOwnProperty.call(body, key)) {
+            const element = body[key];
+            me[key] = element;
+        }
+    }
+    res.send(me);
+}
+);
