@@ -1,0 +1,98 @@
+Ok 200
+Created 201
+No Content 204
+Moved Permanently 301
+Found 302
+Bad Request 400
+Unauthorized 401
+Not Found 404
+Unprocessable Content 422
+I’m a teapot 418
+Use Proxy 305
+Temorary Redirect 307
+Request Timeout 408
+Payload Too Large 413
+Expectation Failed 417
+
+-------------------------------
+
+Was macht ein Backend aus?Ein Backend ist der Teil einer Softwareanwendung, der für die Verarbeitung von Daten und die Geschäftslogik zuständig ist. Es handhabt Aufgaben wie Datenbankzugriff, Authentifizierung, Berechnungen, Datenverarbeitung und die Kommunikation mit anderen Systemen.
+
+Wo läuft ein Backend?Ein Backend kann auf verschiedenen Arten betrieben werden, abhängig von den Anforderungen der Anwendung. Es kann auf einem dedizierten Server, einer Cloud-Plattform oder in einer Containerumgebung wie Docker laufen.
+
+Wie ist das Backend mit dem Fronend verbunden?Das Backend ist über APIs (Application Programming Interfaces) mit dem Frontend verbunden. APIs dienen als Schnittstelle, über die das Frontend mit dem Backend kommunizieren kann. Das Frontend kann Anfragen an das Backend senden, um Daten abzurufen, zu speichern oder zu verarbeiten. Das Backend antwortet dann mit den entsprechenden Daten oder führt die angeforderten Aktionen aus.
+
+Welche Technologien braucht man im Backend? Welche Frameworks?Die Technologien, die im Backend verwendet werden, hängen von den Anforderungen der Anwendung ab. Einige grundlegende Technologien umfassen Programmiersprachen wie Java, Python, Ruby oder JavaScript (Node.js). Datenbanken wie MySQL, PostgreSQL oder MongoDB werden oft verwendet. Frameworks wie Spring (für Java), Django (für Python), Ruby on Rails oder Express.js (für JavaScript) sind beliebt, um die Entwicklung im Backend zu unterstützen. Darüber hinaus können weitere Tools und Technologien wie Caching-Systeme, Messaging-Broker und Sicherheitsbibliotheken je nach Anforderungen der Anwendung eingesetzt werden.
+
+--------------------------------
+
+NodeJS ist eine Open-Source-Laufzeitumgebung, die auf der V8-JavaScript-Engine von Google basiert.
+Ursprung: 2009 von Ryan Dahl entwickelt, welcher V8 aus dem
+Chrome-Browser extrahiert hat.
+Plattformübergreifend: Windows, macOS, Linux
+Ereignisgesteuert: asynchrone I/O-Operationen
+Anwendungsbereiche: Webserver, APIs, Echtzeitanwendungen
+NPM: Node Package Manager zur Verwaltung von Module
+
+--------------------------------
+
+Beispielcode zu Callbacks
+
+1 function greifeAufDatenbankZu(query, callback) {
+2  Datenbankzugriff simulieren
+3 setTimeout(()  {
+4 const ergebnis = 'Datenbankergebnis: ' + query;
+5 callback(ergebnis);
+6 }, 1000);
+7 }
+8
+9 greifeAufDatenbankZu('SELECT * FROM users', function(ergebnis) {
+10 console.log(ergebnis);
+11 });
+
+--------------------------------
+
+Promises in JavaScript
+Promises repräsentieren den zukünftigen Wert einer asynchronen Operation und helfen, asynchronen Code
+besser zu organisieren.
+Vereinfacht das Verwalten von asynchronem Code
+Vermeidet "Callback-Hölle"
+Zustände: pending, fullled (erfüllt) und rejected (abgelehnt)
+Methoden: .then() , .catch() und .fnally()
+Promise-Ketten: Verkettung mehrerer asynchroner Aktionen
+
+--------------------------------
+
+Async/Await in JavaScript
+Async/Await ist eine moderne Syntax zur Vereinfachung der Arbeit mit Promises, die das Schreiben von
+asynchronem Code übersichtlicher und lesbarer macht.
+async : Schlüsselwort, das vor einer Funktion deklariert wird
+await : Schlüsselwort, das vor einer Promise verwendet wird
+Vereinfacht das Fehlerhandling mit try und catch
+Syntaktischer Zucker: Vereinfachung der Promise-Syntax
+Macht asynchronen Code ähnlich wie synchronen Code````````
+
+--------------------------------
+
+Beispielcode zu Async/Await
+
+1 function greifeAufDatenbankZu(query) {
+2 return new Promise((resolve, reject)  {
+3  Datenbankzugriff simulieren
+4 setTimeout(()  {
+5 const ergebnis = 'Datenbankergebnis: ' + query;
+6 resolve(ergebnis);
+7 }, 1000);
+8 });
+9 }
+10
+11 async function verarbeiteDatenbankanfrage() {
+12 try {
+13 const ergebnis = await greifeAufDatenbankZu('SELECT * FROM users');
+14 console.log(ergebnis);
+15 } catch (err) {
+16 console.error('Fehler beim Datenbankzugriff:', err);
+17 }
+18 }
+19
+20 verarbeiteDatenbankanfrage();
