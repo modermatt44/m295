@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const bodyParser = require('body-parser');
+const e = require('express');
 
 const fromHelper = bodyParser.urlencoded({ extended: false });
 
@@ -57,17 +58,18 @@ app.post('/books', fromHelper, (req, res) => {
 }
 );
 
-// PUT Endpoint to update a book from the list of books and return status code 204 if the book was updated and 404 otherwise
+// PUT Endpoint to override a book from the list of books using a JSON object as body and return status code 204 if the book was updated and 404 otherwise
 app.put('/books/:title', fromHelper, (req, res) => {
     const title = req.params.title;
-    const titleParam = req.body.title;
+    const titleparams = req.body.title;
     const description = req.body.description;
     const book = books.find(book => book.title === title);
-    if (book) {
-        book.title = titleParam;
-        book.description = description;
-        res.send(book);
+    if (book && description && titleparams) {
+        Object.assign(book, { title: titleparams, description: description })
+        res.send(`Updated book with title "${title}"`);
         res.sendStatus(204);
+    } else if(!description || !titleparams){
+        res.sendStatus(400);
     } else {
         res.sendStatus(404);
     }
