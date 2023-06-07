@@ -51,6 +51,8 @@ app.post('/books', fromHelper, (req, res) => {
     const book = books.find(book => book.title === title);
     if (book) {
         res.sendStatus(409);
+    } else if (!description || !title) {
+        res.sendStatus(422);
     } else {
         books.push({ title: title, description: description });
         res.sendStatus(201);
@@ -69,7 +71,7 @@ app.put('/books/:title', fromHelper, (req, res) => {
         res.send(`Updated book with title "${title}"`);
         res.sendStatus(204);
     } else if(!description || !titleparams){
-        res.sendStatus(400);
+        res.sendStatus(422);
     } else {
         res.sendStatus(404);
     }
