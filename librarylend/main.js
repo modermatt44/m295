@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const bodyParser = require('body-parser');
+const jsonValidator = require('json-validator')
 
 const fromHelper = bodyParser.urlencoded({ extended: false });
 const localDate = new Date().toLocaleDateString('de-CH', { timeZone: 'Europe/Zurich' });
@@ -46,6 +47,14 @@ const test = function checkLendings(customer_id) {
     } else {
         return false;
     }
+}
+
+async function isValid(){
+    return new Promise((resolve, reject) => {
+        jsonValidator.validate(lends, lendSchema, function(err, messages){
+            resolve(messages)
+        })  
+    })
 }
 
 // GET Endpoint to get a list of lendings
@@ -114,6 +123,16 @@ app.patch('/lends/:id', fromHelper, (req, res) => {
     }
 }
 );
+
+const lendSchema = {
+    isbn: {
+        required: true,
+        isLength: 13 
+    },
+    customer_id: {
+        required: true
+    }
+}
 
 // Listen on port 3000
 app.listen(port, () => {
