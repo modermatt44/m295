@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const bodyParser = require('body-parser');
-const e = require('express');
 
 const fromHelper = bodyParser.urlencoded({ extended: false });
 
@@ -98,3 +97,4 @@ app.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
 }
 );
+    
