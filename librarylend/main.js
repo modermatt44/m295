@@ -3,9 +3,29 @@ const app = express();
 const port = 3000;
 const bodyParser = require('body-parser');
 const jsonValidator = require('json-validator')
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+
+app.use(cookieParser());
+
+app.use(session({
+    secret: 'my secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {}
+}));
 
 const fromHelper = bodyParser.urlencoded({ extended: false });
 const localDate = new Date().toLocaleDateString('de-CH', { timeZone: 'Europe/Zurich' });
+
+// Define a list of users
+const users = [
+    {
+        id: 1,
+        email: 'desk@library.example',
+        password: 'm295',
+    },
+]
 
 // Define a list of lendings
 const lendings = [
@@ -49,22 +69,31 @@ const test = function checkLendings(customer_id) {
     }
 }
 
-async function isValid(){
+async function isValid() {
     return new Promise((resolve, reject) => {
-        jsonValidator.validate(lends, lendSchema, function(err, messages){
+        jsonValidator.validate(lends, lendSchema, function (err, messages) {
             resolve(messages)
-        })  
+        })
     })
+}
+
+function checkLogin(req, res) {
+    if (!req.session.user) {
+        res.sendStatus(401);
+        return;
+    }
 }
 
 // GET Endpoint to get a list of lendings
 app.get('/lends', (req, res) => {
+    checkLogin(req, res);
     res.send(lendings);
 }
 );
 
 // GET Endpoint to get a lending from the list of lendings and return status code 200 if the lending was found and 404 otherwise
 app.get('/lends/:id', (req, res) => {
+    checkLogin(req, res);
     const id = req.params.id;
     const lending = lendings.find(lending => lending.id == id);
     if (lending) {
@@ -79,6 +108,7 @@ app.get('/lends/:id', (req, res) => {
 // If the book is already lent, return status code 409
 
 app.post('/lends', fromHelper, (req, res) => {
+    checkLogin(req, res);
     const customer_id = req.body.customer_id;
     const isbn = req.body.isbn;
     const lending = lendings.find(lending => lending.isbn == isbn);
@@ -102,6 +132,7 @@ app.post('/lends', fromHelper, (req, res) => {
 
 // PATCH to change data of a lending
 app.patch('/lends/:id', fromHelper, (req, res) => {
+    checkLogin(req, res);
     const id = req.params.id;
     const customer_id = req.body.customer_id;
     const isbn = req.body.isbn;
@@ -127,12 +158,45 @@ app.patch('/lends/:id', fromHelper, (req, res) => {
 const lendSchema = {
     isbn: {
         required: true,
-        isLength: 13 
+        isLength: 13
     },
     customer_id: {
         required: true
     }
 }
+
+// POST endpoint to login a user and save the user in the session
+app.post('/login', fromHelper, async (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+    const user = users.find(user => user.email == email && user.password == password);
+    if (user) {
+        req.session.user = user;
+        res.sendStatus(200);
+    } else {
+        res.sendStatus(401);
+    }
+}
+);
+
+// GET /verify endpoint to check the user cookie with cookie-parser
+app.get('/verify', (req, res) => {
+    if (req.session.user) {
+        res.sendStatus(200);
+    } else {
+        res.sendStatus(401);
+    }
+}
+);
+
+// GET endpoint 
+
+// DELETE endpoint to logout a user
+app.delete('/logout', (req, res) => {
+    req.session.destroy();
+    res.status(204).send("Logged Out!");
+}
+);
 
 // Listen on port 3000
 app.listen(port, () => {
